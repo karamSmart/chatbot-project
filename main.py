@@ -1,40 +1,31 @@
-import random
+from flask import Flask, request
 
-def play_game():
-    secret_number = random.randint(1, 10)
-    attempts = 3
+app = Flask(__name__)
 
-    print("🎮 Welcome to Guess Game!")
+@app.route("/")
+def home():
+    return '''
+    <h1>🤖 AI Chatbot</h1>
+    <form action="/chat" method="post">
+        <input name="message" placeholder="Say something..." />
+        <button type="submit">Send</button>
+    </form>
+    '''
 
-    while attempts > 0:
-        guess = input("Guess a number (1-10): ")
+@app.route("/chat", methods=["POST"])
+def chat():
+    msg = request.form["message"].lower()
 
-        if not guess.isdigit():
-            print("❌ Please enter a number!")
-            continue
+    if msg == "hello":
+        reply = "Hi 👋"
+    elif msg == "how are you":
+        reply = "I'm good 😄"
+    elif msg == "bye":
+        reply = "Goodbye 👋"
+    else:
+        reply = "I don't understand 🤔"
 
-        guess = int(guess)
+    return f"<h2>{reply}</h2><br><a href='/'>Back</a>"
 
-        if guess == secret_number:
-            print("🎉 You win!")
-            return
-        elif guess < secret_number:
-            print("📉 Too low!")
-        else:
-            print("📈 Too high!")
-
-        attempts -= 1
-        print("Attempts left:", attempts)
-
-    print("💀 You lost! The number was:", secret_number)
-
-
-# 🔁 حلقة إعادة اللعب
-while True:
-    play_game()
-
-    play_again = input("Play again? (yes/no): ").lower()
-
-    if play_again != "yes":
-        print("👋 Thanks for playing!")
-        break
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=10000)
